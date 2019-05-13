@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width" />
+<title>bj</title>
+</head>
+<body>
+  <div id="app">
+    <button @click="getCard" :disabled="!!resultStr">Pick</button>
+    <button @click="decide" :disabled="!!resultStr">Decide</button>
+    <button @click="reset">Reset</button>
+    <br>
+
+    Mine:
+    {{ myPoint }} [
+    <template v-for="{ mark, num } of myCards">
+      {{ mark }}{{ num }}
+    </template>
+    ]
+    <br>
+    His:
+    <template v-if="!resultStr">
+      [{{ hisCards[0].mark }}{{ hisCards[0].num }} **]
+    </template>
+    <template v-else>
+      {{ hisPoint }} [
+      <template v-for="({ mark, num }, i) of hisCards">
+        {{ mark }}{{ num }}
+      </template>
+      ]
+    </template>
+
+    <div v-if="resultStr">
+      <strong>{{ resultStr }}.</strong>
+    </div>
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.0/dist/vue.js"></script>
+<script src="./app.js"></script>
+<style>
+  button {
+    margin: 0.5em;
+    padding: 0.5em;
+    font-size: 16px;
+  }
+</style>
+</html>
