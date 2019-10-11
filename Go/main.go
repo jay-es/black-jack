@@ -1,47 +1,52 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"./card"
+	"./player"
+)
 
 func main() {
-	var cardDeck cardDeck
-	me := player{name: "Player"}
-	he := player{name: "Dealer"}
+	var cardDeck card.Deck
+	me := player.Player{Name: "Player"}
+	he := player.Player{Name: "Dealer"}
 
-	cardDeck.init()
-	me.addCard(cardDeck.pick())
-	me.addCard(cardDeck.pick())
-	he.addCard(cardDeck.pick())
-	he.addCard(cardDeck.pick())
-	he.display(true)
+	cardDeck.Init()
+	me.AddCard(cardDeck.Pick())
+	me.AddCard(cardDeck.Pick())
+	he.AddCard(cardDeck.Pick())
+	he.AddCard(cardDeck.Pick())
+	he.Display(true)
 
 	for key := ""; key != "n"; {
-		me.display(false)
+		me.Display(false)
 
 		fmt.Println("more? y/n")
 		fmt.Scan(&key)
 		fmt.Println()
 
 		if key == "y" {
-			me.addCard(cardDeck.pick())
+			me.AddCard(cardDeck.Pick())
 
-			if me.score > 21 {
-				me.display(false)
+			if me.Score > 21 {
+				me.Display(false)
 				fmt.Println("LOSE!")
 				return
 			}
 		}
 	}
 
-	for he.score < 17 {
-		he.addCard(cardDeck.pick())
+	for he.Score < 17 {
+		he.AddCard(cardDeck.Pick())
 	}
 
-	me.display(false)
-	he.display(false)
+	me.Display(false)
+	he.Display(false)
 
-	if he.score > 21 || me.score > he.score {
+	if he.Score > 21 || me.Score > he.Score {
 		fmt.Println("WIN!")
-	} else if he.score > me.score {
+	} else if he.Score > me.Score {
 		fmt.Println("LOSE!")
 	} else {
 		fmt.Println("DRAW!")
