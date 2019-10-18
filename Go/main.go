@@ -8,15 +8,13 @@ import (
 )
 
 func main() {
-	var cardDeck card.Deck
 	me := player.Player{Name: "Player"}
 	he := player.Player{Name: "Dealer"}
 
-	cardDeck.Init()
-	me.AddCard(cardDeck.Pick())
-	me.AddCard(cardDeck.Pick())
-	he.AddCard(cardDeck.Pick())
-	he.AddCard(cardDeck.Pick())
+	me.AddCard(card.Pick())
+	me.AddCard(card.Pick())
+	he.AddCard(card.Pick())
+	he.AddCard(card.Pick())
 	he.Display(true)
 
 	for key := ""; key != "n"; {
@@ -27,7 +25,7 @@ func main() {
 		fmt.Println()
 
 		if key == "y" {
-			me.AddCard(cardDeck.Pick())
+			me.AddCard(card.Pick())
 
 			if me.Score > 21 {
 				me.Display(false)
@@ -38,7 +36,7 @@ func main() {
 	}
 
 	for he.Score < 17 {
-		he.AddCard(cardDeck.Pick())
+		he.AddCard(card.Pick())
 	}
 
 	me.Display(false)

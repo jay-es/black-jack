@@ -6,17 +6,15 @@ import (
 	"time"
 )
 
-type Deck struct {
-	cards [52]Card
-}
+var deck [52]Card
 
-func (deck *Deck) Init() {
+func init() {
 	rand.Seed(time.Now().UnixNano())
 	i := 0
 
 	for _, mark := range [4]string{"S", "H", "D", "C"} {
 		for n := 1; n <= 13; n++ {
-			deck.cards[i] = Card{
+			deck[i] = Card{
 				done:  false,
 				mark:  mark,
 				num:   byte(n),
@@ -27,10 +25,10 @@ func (deck *Deck) Init() {
 	}
 }
 
-func (deck *Deck) Pick() (card *Card) {
+func Pick() (card *Card) {
 	for card == nil || card.done {
 		rnd := rand.Intn(52)
-		card = &deck.cards[rnd]
+		card = &deck[rnd]
 	}
 
 	card.done = true
