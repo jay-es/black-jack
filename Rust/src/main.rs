@@ -74,6 +74,15 @@ impl Player {
             .collect::<Vec<String>>()
             .join(" ")
     }
+
+    /** 手札を表示 */
+    fn show(&self, hidden: bool) -> String {
+        if hidden {
+            format!("** [{} **]", self.cards[0].disp())
+        } else {
+            format!("{} [{}]", self.point, self.join_cards())
+        }
+    }
 }
 
 /** 勝敗判定 */
@@ -91,14 +100,10 @@ fn judge(my_points: u8, his_points: u8) -> &'static str {
 
 /** 場を表示 */
 fn show_table(me: &Player, him: &Player, done: bool) {
-    print!("Mine: {} [{}]", me.point, me.join_cards());
+    println!("Mine: {}  His: {}", me.show(false), him.show(!done));
 
-    print!("  His: ");
     if done {
-        println!("{} [{}]", him.point, him.join_cards());
         println!("{}", judge(me.point, him.point));
-    } else {
-        println!("** [{} **]", him.cards[0].disp());
     }
 }
 
