@@ -5,12 +5,15 @@ use std::io;
 struct Card {
     mark: char,
     num: u8,
-    val: u8,
 }
 
 impl Card {
     fn disp(&self) -> String {
         format!("{}{}", self.mark, self.num)
+    }
+
+    fn val(&self) -> u8 {
+        self.num.min(10)
     }
 }
 
@@ -29,7 +32,6 @@ impl Deck {
             let card = Card {
                 mark: marks[i % 4],
                 num,
-                val: num.min(10),
             };
             cards.push(card);
         }
@@ -53,13 +55,14 @@ struct Player {
 impl Player {
     fn init(card1: Card, card2: Card) -> Player {
         Player {
-            point: card1.val + card2.val,
+            point: card1.val() + card2.val(),
             cards: vec![card1, card2],
         }
     }
 
+    /** 手札追加 */
     fn add(&mut self, card: Card) {
-        self.point += card.val;
+        self.point += card.val();
         self.cards.push(card);
     }
 
@@ -129,7 +132,7 @@ fn main() {
         }
     };
 
-    // プレイヤーの負けが確定していなければディーラーのターン
+    // プレイヤーがバーストしていなければディーラーのターン
     if !lost {
         loop {
             // 17点以上なら抜ける
