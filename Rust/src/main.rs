@@ -44,25 +44,37 @@ impl Deck {
     }
 }
 
-/** カードの合計点数を計算 */
-fn get_point(cards: &[Card]) -> u8 {
-    cards.iter().map(|x| x.val).sum::<u8>()
+#[derive(Debug)]
+struct Player {
+    cards: Vec<Card>,
+    point: u8,
 }
 
-/** カードを表示用の文字列に */
-fn join_cards(cards: &[Card]) -> String {
-    cards
-        .iter()
-        .map(|x| x.disp())
-        .collect::<Vec<String>>()
-        .join(" ")
+impl Player {
+    fn init(card1: Card, card2: Card) -> Player {
+        Player {
+            cards: vec![card1, card2],
+            point: card1.val + card2.val,
+        }
+    }
+
+    fn add(&mut self, card: Card) {
+        self.point += card.val;
+        self.cards.push(card);
+    }
+
+    /** カードを表示用の文字列に */
+    fn join_cards(&self) -> String {
+        self.cards
+            .iter()
+            .map(|x| x.disp())
+            .collect::<Vec<String>>()
+            .join(" ")
+    }
 }
 
 /** 勝敗判定 */
-fn judge<'a>(my_cards: &'a [Card], his_cards: &'a [Card]) -> &'a str {
-    let my_points = get_point(my_cards);
-    let his_points = get_point(his_cards);
-
+fn judge(my_points: u8, his_points: u8) -> &'static str {
     if my_points > 21 {
         "Lost"
     } else if his_points > 21 || my_points > his_points {
@@ -75,25 +87,25 @@ fn judge<'a>(my_cards: &'a [Card], his_cards: &'a [Card]) -> &'a str {
 }
 
 /** 場を表示 */
-fn show_table(my_cards: &[Card], his_cards: &[Card], done: bool) {
-    print!("Mine: {} [{}]", get_point(my_cards), join_cards(my_cards));
+fn show_table(me: &Player, him: &Player, done: bool) {
+    print!("Mine: {} [{}]", me.point, me.join_cards());
 
     print!("  His: ");
     if done {
-        println!("{} [{}]", get_point(his_cards), join_cards(his_cards));
-        println!("{}", judge(my_cards, his_cards));
+        println!("{} [{}]", him.point, him.join_cards());
+        println!("{}", judge(me.point, him.point));
     } else {
-        println!("** [{} **]", his_cards[0].disp());
+        println!("** [{} **]", him.cards[0].disp());
     }
 }
 
 fn main() {
     let mut deck = Deck::init();
-    let mut my_cards = vec![deck.pick(), deck.pick()];
-    let mut his_cards = vec![deck.pick(), deck.pick()];
+    let mut me = Player::init(deck.pick(), deck.pick());
+    let mut him = Player::init(deck.pick(), deck.pick());
 
     let lost = loop {
-        show_table(&my_cards, &his_cards, false);
+        show_table(&me, &him, false);
         println!("pick? Y/n");
 
         let mut input = String::new();
@@ -109,10 +121,10 @@ fn main() {
             continue;
         }
 
-        my_cards.push(deck.pick());
+        me.add(deck.pick());
 
         // 21 点超えたらプレイヤーの負け
-        if get_point(&my_cards) > 21 {
+        if me.point > 21 {
             break true;
         }
     };
@@ -121,13 +133,13 @@ fn main() {
     if !lost {
         loop {
             // 17点以上なら抜ける
-            if get_point(&his_cards) >= 17 {
+            if him.point >= 17 {
                 break;
             }
 
-            his_cards.push(deck.pick());
+            him.add(deck.pick());
         }
     }
 
-    show_table(&my_cards, &his_cards, true);
+    show_table(&me, &him, true);
 }
