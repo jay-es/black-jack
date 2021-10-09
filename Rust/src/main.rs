@@ -14,31 +14,34 @@ impl Card {
     }
 }
 
-type Deck = Vec<Card>;
-
-/** デッキ作成 */
-fn make_deck() -> Deck {
-    let marks = ['C', 'D', 'H', 'S'];
-    let mut cards: Deck = Vec::new();
-
-    for i in 0..52 {
-        let num = (i % 13 + 1) as u8;
-
-        let card = Card {
-            mark: marks[i % 4],
-            num,
-            val: num.min(10),
-        };
-        cards.push(card);
-    }
-
-    cards
+struct Deck {
+    cards: Vec<Card>,
 }
 
-/** デッキから1枚ひく */
-fn pick_card(deck: &mut Deck) -> Card {
-    let index = thread_rng().gen_range(0..deck.len());
-    deck.remove(index)
+impl Deck {
+    /** デッキ作成 */
+    fn init() -> Deck {
+        let marks = ['C', 'D', 'H', 'S'];
+        let mut cards: Vec<Card> = Vec::new();
+
+        for i in 0..52 {
+            let num = (i % 13 + 1) as u8;
+            let card = Card {
+                mark: marks[i % 4],
+                num,
+                val: num.min(10),
+            };
+            cards.push(card);
+        }
+
+        Deck { cards }
+    }
+
+    /** デッキから1枚ひく */
+    fn pick(&mut self) -> Card {
+        let index = thread_rng().gen_range(0..self.cards.len());
+        self.cards.remove(index)
+    }
 }
 
 /** カードの合計点数を計算 */
@@ -85,9 +88,9 @@ fn show_table(my_cards: &[Card], his_cards: &[Card], done: bool) {
 }
 
 fn main() {
-    let mut deck = make_deck();
-    let mut my_cards = vec![pick_card(&mut deck), pick_card(&mut deck)];
-    let mut his_cards = vec![pick_card(&mut deck), pick_card(&mut deck)];
+    let mut deck = Deck::init();
+    let mut my_cards = vec![deck.pick(), deck.pick()];
+    let mut his_cards = vec![deck.pick(), deck.pick()];
 
     let lost = loop {
         show_table(&my_cards, &his_cards, false);
@@ -106,7 +109,7 @@ fn main() {
             continue;
         }
 
-        my_cards.push(pick_card(&mut deck));
+        my_cards.push(deck.pick());
 
         // 21 点超えたらプレイヤーの負け
         if get_point(&my_cards) > 21 {
@@ -122,7 +125,7 @@ fn main() {
                 break;
             }
 
-            his_cards.push(pick_card(&mut deck));
+            his_cards.push(deck.pick());
         }
     }
 
