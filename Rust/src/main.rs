@@ -1,7 +1,7 @@
 use rand::{thread_rng, Rng};
 use std::io;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Debug)]
 struct Card {
     mark: char,
     num: u8,
@@ -9,7 +9,7 @@ struct Card {
 }
 
 impl Card {
-    fn disp(self) -> String {
+    fn disp(&self) -> String {
         format!("{}{}", self.mark, self.num)
     }
 }
@@ -46,15 +46,15 @@ impl Deck {
 
 #[derive(Debug)]
 struct Player {
-    cards: Vec<Card>,
     point: u8,
+    cards: Vec<Card>,
 }
 
 impl Player {
     fn init(card1: Card, card2: Card) -> Player {
         Player {
-            cards: vec![card1, card2],
             point: card1.val + card2.val,
+            cards: vec![card1, card2],
         }
     }
 
