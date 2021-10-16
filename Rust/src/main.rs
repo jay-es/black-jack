@@ -1,89 +1,9 @@
-use rand::{thread_rng, Rng};
+mod card;
+mod player;
+
+use crate::card::Deck;
+use crate::player::Player;
 use std::io;
-
-#[derive(Debug)]
-struct Card {
-    mark: char,
-    num: u8,
-}
-
-impl Card {
-    fn disp(&self) -> String {
-        format!("{}{}", self.mark, self.num)
-    }
-
-    fn val(&self) -> u8 {
-        self.num.min(10)
-    }
-}
-
-struct Deck {
-    cards: Vec<Card>,
-}
-
-impl Deck {
-    /** デッキ作成 */
-    fn init() -> Deck {
-        let marks = ['C', 'D', 'H', 'S'];
-        let mut cards: Vec<Card> = Vec::new();
-
-        for i in 0..52 {
-            let num = (i % 13 + 1) as u8;
-            let card = Card {
-                mark: marks[i % 4],
-                num,
-            };
-            cards.push(card);
-        }
-
-        Deck { cards }
-    }
-
-    /** デッキから1枚ひく */
-    fn pick(&mut self) -> Card {
-        let index = thread_rng().gen_range(0..self.cards.len());
-        self.cards.remove(index)
-    }
-}
-
-#[derive(Debug)]
-struct Player {
-    point: u8,
-    cards: Vec<Card>,
-}
-
-impl Player {
-    fn init(card1: Card, card2: Card) -> Player {
-        Player {
-            point: card1.val() + card2.val(),
-            cards: vec![card1, card2],
-        }
-    }
-
-    /** 手札追加 */
-    fn add(&mut self, card: Card) {
-        self.point += card.val();
-        self.cards.push(card);
-    }
-
-    /** カードを表示用の文字列に */
-    fn join_cards(&self) -> String {
-        self.cards
-            .iter()
-            .map(|x| x.disp())
-            .collect::<Vec<String>>()
-            .join(" ")
-    }
-
-    /** 手札を表示 */
-    fn show(&self, hidden: bool) -> String {
-        if hidden {
-            format!("** [{} **]", self.cards[0].disp())
-        } else {
-            format!("{} [{}]", self.point, self.join_cards())
-        }
-    }
-}
 
 /** 勝敗判定 */
 fn judge(my_points: u8, his_points: u8) -> &'static str {
