@@ -22,7 +22,7 @@ pub struct Deck {
 
 impl Deck {
     /** デッキ作成 */
-    pub fn init() -> Self {
+    pub fn new() -> Self {
         let marks = ['C', 'D', 'H', 'S'];
         let mut cards: Vec<Card> = Vec::new();
 

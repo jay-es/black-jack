@@ -7,7 +7,7 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn init(card1: Card, card2: Card) -> Self {
+    pub fn new(card1: Card, card2: Card) -> Self {
         Self {
             point: card1.val() + card2.val(),
             cards: vec![card1, card2],

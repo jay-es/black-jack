@@ -28,9 +28,9 @@ fn show_table(me: &Player, him: &Player, done: bool) {
 }
 
 fn main() {
-    let mut deck = Deck::init();
-    let mut me = Player::init(deck.pick(), deck.pick());
-    let mut him = Player::init(deck.pick(), deck.pick());
+    let mut deck = Deck::new();
+    let mut me = Player::new(deck.pick(), deck.pick());
+    let mut him = Player::new(deck.pick(), deck.pick());
 
     let lost = loop {
         show_table(&me, &him, false);
