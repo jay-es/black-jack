@@ -23,7 +23,7 @@ fn show_table(me: &Player, him: &Player, done: bool) {
     println!("Mine: {}  His: {}", me.show(false), him.show(!done));
 
     if done {
-        println!("{}", judge(me.point, him.point));
+        println!("{}", judge(me.point(), him.point()));
     }
 }
 
@@ -52,7 +52,7 @@ fn main() {
         me.add(deck.pick());
 
         // 21 点超えたらプレイヤーの負け
-        if me.point > 21 {
+        if me.point() > 21 {
             break true;
         }
     };
@@ -61,7 +61,7 @@ fn main() {
     if !lost {
         loop {
             // 17点以上なら抜ける
-            if him.point >= 17 {
+            if him.point() >= 17 {
                 break;
             }
 

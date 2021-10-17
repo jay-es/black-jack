@@ -2,7 +2,7 @@ use crate::card::Card;
 
 #[derive(Debug)]
 pub struct Player {
-    pub point: u8,
+    point: u8,
     cards: Vec<Card>,
 }
 
@@ -12,6 +12,10 @@ impl Player {
             point: card1.val() + card2.val(),
             cards: vec![card1, card2],
         }
+    }
+
+    pub fn point(&self) -> u8 {
+        self.point
     }
 
     /** 手札追加 */
