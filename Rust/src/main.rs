@@ -5,11 +5,13 @@ use crate::card::Deck;
 use crate::player::Player;
 use std::io;
 
+const MAX_POINT: u8 = 21;
+
 /** 勝敗判定 */
 fn judge(my_points: u8, his_points: u8) -> &'static str {
-    if my_points > 21 {
+    if my_points > MAX_POINT {
         "Lost"
-    } else if his_points > 21 || my_points > his_points {
+    } else if his_points > MAX_POINT || my_points > his_points {
         "Won"
     } else if my_points < his_points {
         "Lost"
@@ -51,8 +53,8 @@ fn main() {
 
         me.add(deck.pick());
 
-        // 21 点超えたらプレイヤーの負け
-        if me.point() > 21 {
+        // 最大値を超えたらプレイヤーの負け
+        if me.point() > MAX_POINT {
             break true;
         }
     };
