@@ -3,6 +3,7 @@
 sudo apt-get update
 sudo apt-get install -y m4
 sudo apt install -y rlwrap
+sudo apt-get install -y inotify-tools
 
 opam install dune
 opam install merlin

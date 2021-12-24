@@ -8,6 +8,12 @@
       "type": "shell",
       "command": "cd src && rlwrap ocaml",
       "problemMatcher": []
+    },
+    {
+      "label": "dune:watch",
+      "type": "shell",
+      "command": "dune build --watch --terminal-persistence=clear-on-rebuild",
+      "problemMatcher": []
     }
   ]
 }
