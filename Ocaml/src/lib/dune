@@ -1,2 +1,4 @@
 (library
- (name mylib))
+ (name mylib)
+ (inline_tests)
+ (preprocess (pps ppx_inline_test)))
