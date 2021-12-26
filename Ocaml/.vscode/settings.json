@@ -4,7 +4,7 @@
     "switch": "4.10",
     "kind": "opam"
   },
-  "[ocaml]": {
+  "[ocaml][ocaml.interface]": {
     "editor.formatOnSave": true
   }
 }

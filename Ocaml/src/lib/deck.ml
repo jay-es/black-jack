@@ -33,6 +33,31 @@ let shuffle arr =
 (* unit -> card list *)
 let make_deck () = Array.init 52 make_card |> shuffle |> Array.to_list
 
+(* デッキから1枚引く *)
+(* 'a list -> 'a list -> ('a list * 'a list) *)
+let pick deck cards =
+  match deck with
+  | [] -> raise (Failure "もう引けない")
+  | first :: rest -> (rest, first :: cards)
+
+let%test _ =
+  let deck, cards = pick [ 0; 1; 2 ] [] in
+  deck = [ 1; 2 ] && cards = [ 0 ]
+
+(* デッキ、手札の作成 *)
+(* unit -> card list * card list * card list *)
+let init () =
+  let deck = make_deck () in
+  let deck, my_cards = pick deck [] in
+  let deck, my_cards = pick deck my_cards in
+  let deck, his_cards = pick deck [] in
+  let deck, his_cards = pick deck his_cards in
+  (deck, my_cards, his_cards)
+
+let%test _ =
+  let deck, my_cards, his_cards = init () in
+  List.length deck = 48 && List.length my_cards = 2 && List.length his_cards = 2
+
 (* カード表示 *)
 (* card -> string *)
 let string_of_card card =
