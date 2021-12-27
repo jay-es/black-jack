@@ -38,11 +38,15 @@ let make_deck () = Array.init 52 make_card |> shuffle |> Array.to_list
 let pick deck cards =
   match deck with
   | [] -> raise (Failure "もう引けない")
-  | first :: rest -> (rest, first :: cards)
+  | first :: rest -> (rest, cards @ [ first ])
 
 let%test _ =
   let deck, cards = pick [ 0; 1; 2 ] [] in
   deck = [ 1; 2 ] && cards = [ 0 ]
+
+let%test _ =
+  let deck, cards = pick [ 1; 2 ] [ 0 ] in
+  deck = [ 2 ] && cards = [ 0; 1 ]
 
 (* デッキ、手札の作成 *)
 (* unit -> card list * card list * card list *)
@@ -79,3 +83,58 @@ let%test _ =
       { suit = "S"; number = 12; value = 10 };
     ]
   = 11
+
+(* バーストしてるか *)
+(* card list -> bool *)
+let is_busted cards = sum_cards cards > 21
+
+let%test _ = is_busted [ { suit = ""; number = 0; value = 21 } ] = false
+
+let%test _ = is_busted [ { suit = ""; number = 0; value = 22 } ] = true
+
+(* 勝敗判定 *)
+type state = Lose | Win | Draw
+
+let judge my_cards his_cards =
+  let my_score = sum_cards my_cards in
+  let his_score = sum_cards his_cards in
+  if is_busted my_cards then Lose
+  else if is_busted his_cards || my_score > his_score then Win
+  else if his_score > my_score then Lose
+  else Draw
+
+let%test _ =
+  judge
+    [ { suit = ""; number = 0; value = 22 } ]
+    [ { suit = ""; number = 0; value = 21 } ]
+  = Lose
+
+let%test _ =
+  judge
+    [ { suit = ""; number = 0; value = 20 } ]
+    [ { suit = ""; number = 0; value = 21 } ]
+  = Lose
+
+let%test _ =
+  judge
+    [ { suit = ""; number = 0; value = 21 } ]
+    [ { suit = ""; number = 0; value = 22 } ]
+  = Win
+
+let%test _ =
+  judge
+    [ { suit = ""; number = 0; value = 21 } ]
+    [ { suit = ""; number = 0; value = 20 } ]
+  = Win
+
+let%test _ =
+  judge
+    [ { suit = ""; number = 0; value = 21 } ]
+    [ { suit = ""; number = 0; value = 21 } ]
+  = Draw
+
+let judge_str my_cards his_cards =
+  match judge my_cards his_cards with
+  | Win -> "You Won!"
+  | Lose -> "You Lost!"
+  | Draw -> "Draw!"
