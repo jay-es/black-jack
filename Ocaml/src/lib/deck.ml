@@ -1,4 +1,4 @@
-type card = { suit : string; number : int; value : int }
+type card = { suit : string; number : int }
 
 (* int -> string *)
 let suit_of_int n =
@@ -12,11 +12,22 @@ let%test _ = suit_of_int 5 = "D"
 (* int -> card *)
 let make_card n =
   let number = (n mod 13) + 1 in
-  { suit = suit_of_int n; number; value = min number 10 }
+  { suit = suit_of_int n; number }
 
-let%test _ = make_card 0 = { suit = "C"; number = 1; value = 1 }
+let%test _ = make_card 0 = { suit = "C"; number = 1 }
 
-let%test _ = make_card 11 = { suit = "S"; number = 12; value = 10 }
+let%test _ = make_card 11 = { suit = "S"; number = 12 }
+
+(* テスト用: 指定した点数のカードリスト作成 *)
+(* int -> card list *)
+let rec mock_cards number =
+  if number > 10 then { suit = ""; number = 10 } :: mock_cards (number - 10)
+  else [ { suit = ""; number } ]
+
+let%test _ = mock_cards 1 = [ { suit = ""; number = 1 } ]
+
+let%test _ =
+  mock_cards 12 = [ { suit = ""; number = 10 }; { suit = ""; number = 2 } ]
 
 (* Fisher-Yates shuffle *)
 let shuffle arr =
@@ -67,30 +78,27 @@ let%test _ =
 let string_of_card card =
   match card with { suit; number; _ } -> suit ^ string_of_int number
 
-let%test _ = string_of_card { suit = "C"; number = 1; value = 1 } = "C1"
+let%test _ = string_of_card { suit = "C"; number = 1 } = "C1"
 
-let%test _ = string_of_card { suit = "S"; number = 12; value = 10 } = "S12"
+let%test _ = string_of_card { suit = "S"; number = 12 } = "S12"
 
 (* カード点数合計 *)
 (* card list -> int *)
 let rec sum_cards cards =
-  match cards with [] -> 0 | { value; _ } :: rest -> value + sum_cards rest
+  match cards with
+  | [] -> 0
+  | { number; _ } :: rest -> min number 10 + sum_cards rest
 
 let%test _ =
-  sum_cards
-    [
-      { suit = "C"; number = 1; value = 1 };
-      { suit = "S"; number = 12; value = 10 };
-    ]
-  = 11
+  sum_cards [ { suit = "C"; number = 1 }; { suit = "S"; number = 12 } ] = 11
 
 (* バーストしてるか *)
 (* card list -> bool *)
 let is_busted cards = sum_cards cards > 21
 
-let%test _ = is_busted [ { suit = ""; number = 0; value = 21 } ] = false
+let%test _ = is_busted (mock_cards 21) = false
 
-let%test _ = is_busted [ { suit = ""; number = 0; value = 22 } ] = true
+let%test _ = is_busted (mock_cards 22) = true
 
 (* 勝敗判定 *)
 type state = Lose | Win | Draw
@@ -103,35 +111,15 @@ let judge my_cards his_cards =
   else if his_score > my_score then Lose
   else Draw
 
-let%test _ =
-  judge
-    [ { suit = ""; number = 0; value = 22 } ]
-    [ { suit = ""; number = 0; value = 21 } ]
-  = Lose
+let%test _ = judge (mock_cards 22) (mock_cards 21) = Lose
 
-let%test _ =
-  judge
-    [ { suit = ""; number = 0; value = 20 } ]
-    [ { suit = ""; number = 0; value = 21 } ]
-  = Lose
+let%test _ = judge (mock_cards 20) (mock_cards 21) = Lose
 
-let%test _ =
-  judge
-    [ { suit = ""; number = 0; value = 21 } ]
-    [ { suit = ""; number = 0; value = 22 } ]
-  = Win
+let%test _ = judge (mock_cards 21) (mock_cards 22) = Win
 
-let%test _ =
-  judge
-    [ { suit = ""; number = 0; value = 21 } ]
-    [ { suit = ""; number = 0; value = 20 } ]
-  = Win
+let%test _ = judge (mock_cards 21) (mock_cards 20) = Win
 
-let%test _ =
-  judge
-    [ { suit = ""; number = 0; value = 21 } ]
-    [ { suit = ""; number = 0; value = 21 } ]
-  = Draw
+let%test _ = judge (mock_cards 21) (mock_cards 21) = Draw
 
 let judge_str my_cards his_cards =
   match judge my_cards his_cards with
