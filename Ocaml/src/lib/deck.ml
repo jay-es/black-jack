@@ -101,28 +101,22 @@ let%test _ = is_busted (mock_cards 21) = false
 let%test _ = is_busted (mock_cards 22) = true
 
 (* 勝敗判定 *)
-type state = Lose | Win | Draw
+let win_str, lose_str, draw_str = ("You Won!", "You Lost!", "Draw!")
 
 let judge my_cards his_cards =
   let my_score = sum_cards my_cards in
   let his_score = sum_cards his_cards in
-  if is_busted my_cards then Lose
-  else if is_busted his_cards || my_score > his_score then Win
-  else if his_score > my_score then Lose
-  else Draw
+  if is_busted my_cards then lose_str
+  else if is_busted his_cards || my_score > his_score then win_str
+  else if his_score > my_score then lose_str
+  else draw_str
 
-let%test _ = judge (mock_cards 22) (mock_cards 21) = Lose
+let%test _ = judge (mock_cards 22) (mock_cards 21) = lose_str
 
-let%test _ = judge (mock_cards 20) (mock_cards 21) = Lose
+let%test _ = judge (mock_cards 20) (mock_cards 21) = lose_str
 
-let%test _ = judge (mock_cards 21) (mock_cards 22) = Win
+let%test _ = judge (mock_cards 21) (mock_cards 22) = win_str
 
-let%test _ = judge (mock_cards 21) (mock_cards 20) = Win
+let%test _ = judge (mock_cards 21) (mock_cards 20) = win_str
 
-let%test _ = judge (mock_cards 21) (mock_cards 21) = Draw
-
-let judge_str my_cards his_cards =
-  match judge my_cards his_cards with
-  | Win -> "You Won!"
-  | Lose -> "You Lost!"
-  | Draw -> "Draw!"
+let%test _ = judge (mock_cards 21) (mock_cards 21) = draw_str

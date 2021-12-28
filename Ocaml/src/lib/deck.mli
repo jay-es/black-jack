@@ -15,5 +15,5 @@ val sum_cards : card list -> int
 val is_busted : card list -> bool
 (** バーストしてるか *)
 
-val judge_str : card list -> card list -> string
+val judge : card list -> card list -> string
 (** 勝敗判定  *)
